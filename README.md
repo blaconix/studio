@@ -42,3 +42,12 @@ That's it! You can now use Content Preview in your Nuxt app ✨
 
 </details>
 
+## Oauth Login
+
+### Github OAuth Application
+
+Create github OAuth application and fill `NUXT_OAUTH_GITHUB_CLIENT_ID` and `NUXT_OAUTH_GITHUB_CLIENT_SECRET` in environment variables. Github application callback should be `YOUR_DOMAIN/_admin/auth/github`
+
+### Google OAuth Application
+
+Create Google OAuth application and fill `NUXT_OAUTH_GOOGLE_CLIENT_ID` and `NUXT_OAUTH_GOOGLE_CLIENT_SECRET` in environment variables. Google application callback should be `YOUR_DOMAIN/_admin/auth/google`

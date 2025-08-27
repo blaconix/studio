@@ -11,6 +11,9 @@ export function useGit({ owner, repo, branch, token, authorName, authorEmail }: 
     },
   })
   function commitFiles(files: { path: string, content: string }[], message: string) {
+    if (!token) {
+      return null
+    }
     return commitFilesToGitHub({ owner, repo, branch, token, files, message, authorName, authorEmail })
   }
 

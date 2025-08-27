@@ -17,7 +17,7 @@ const { data: nav } = await useAsyncData('nav', () => {
       </ul>
     </nav>
     <main class="content">
-      <NuxtPage />
+      <slot />
     </main>
   </div>
 </template>

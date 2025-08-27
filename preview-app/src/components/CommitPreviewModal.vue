@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 import ReviewPanel from './ReviewPanel.vue'
 import { usePreview } from '../composables/usePreview'
 import type { DraftFileItem } from '../types'
-import { useToast } from '@nuxt/ui/composables/useToast'
+// import { useToast } from '@nuxt/ui/composables/useToast'
 
 const modelValue = defineModel<any>()
 
@@ -14,7 +14,7 @@ const modelValue = defineModel<any>()
 // })
 
 const preview = usePreview()
-const toast = useToast()
+// const toast = useToast()
 
 const loading = ref(false)
 const filesToReview = ref<DraftFileItem[]>([])
@@ -45,21 +45,21 @@ async function commitChanges() {
 
     await preview.git.commitFiles(files, commitMessage.value || `Chnaged ${files.length} files`)
 
-    toast.add({
-      title: 'Changes committed',
-      description: 'Changes committed to the repository',
-      color: 'green',
-    })
+    // toast.add({
+    //   title: 'Changes committed',
+    //   description: 'Changes committed to the repository',
+    //   color: 'green',
+    // })
 
     await preview.draftFiles.revertAll()
     modelValue.value = false
   }
   catch (e) {
-    toast.add({
-      title: 'Error',
-      description: 'Error committing changes',
-      color: 'red',
-    })
+    // toast.add({
+    //   title: 'Error',
+    //   description: 'Error committing changes',
+    //   color: 'red',
+    // })
   }
   finally {
     commiting.value = false

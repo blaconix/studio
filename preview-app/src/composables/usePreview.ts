@@ -19,7 +19,7 @@ export function usePreview() {
     owner: 'owner',
     repo: 'repo',
     branch: 'main',
-    token: 'ghp_...',
+    token: '',
     authorName: 'Name',
     authorEmail: 'email@example.com',
   })

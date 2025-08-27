@@ -1,4 +1,4 @@
-import { defineNuxtModule, createResolver, addPlugin, extendViteConfig } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addPlugin, extendViteConfig, installModule, extendPages, addServerHandler } from '@nuxt/kit'
 
 import { defu } from 'defu'
 
@@ -31,6 +31,22 @@ export default defineNuxtModule({
         'debug',
         'extend'
       ]
+    })
+
+    await installModule('nuxt-auth-utils')
+    addServerHandler({
+      route: '/_admin/auth/github',
+      handler: runtime('./server/routes/auth/github.get.ts'),
+    })
+    addServerHandler({
+      route: '/_admin/auth/google',
+      handler: runtime('./server/routes/auth/google.get.ts'),
+    })
+    extendPages((pages) => {
+      pages.push({
+        path: '/_admin',
+        file: runtime('./pages/admin.vue'),
+      })
     })
   },
 })
