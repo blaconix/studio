@@ -111,7 +111,12 @@ export function useStudioHost() {
     },
     // New API
     user: {
-      get: () => {},
+      get: () => {
+        return {
+          name: 'John Doe',
+          avatar: 'https://avatars.githubusercontent.com/u/7290030?v=4',
+        }
+      },
     },
 
     document: {

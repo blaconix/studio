@@ -1,35 +1,71 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import UAvatar from '@nuxt/ui/components/Avatar.vue'
-// import { useUserSession } from '#imports'
+import { useStudio } from '../composables/useStudio'
 
-// const { user, clear: logOut } = useUserSession()
-const { user, clear: logOut } = {
-  clear: () => {},
-  user: { name: 'John Doe', avatar: 'https://avatar.nuxt.com/1.png' },
-}
+const studio = useStudio()
+const { host } = studio
+
+const user = computed(() => host.user.get())
+
+const features = [{
+  label: 'Files',
+  icon: 'i-lucide-files',
+  onClick: () => {
+    studio.ui.displayFiles = true
+  },
+}, {
+  label: 'Medias',
+  icon: 'i-lucide-image',
+  onClick: () => {
+    studio.ui.displayMedias = true
+  },
+},
+{
+  label: 'Config',
+  icon: 'i-lucide-settings',
+  onClick: () => {
+    studio.ui.displayConfig = true
+  },
+}]
 
 const userMenuItems = computed(() => [
   {
     label: 'Sign out',
-    icon: 'i-heroicons-arrow-right-on-rectangle',
+    icon: 'i-lucide-log-out',
     onClick: () => {
-      logOut()
+      alert('TODO: delete cookie manually')
     },
   },
 ])
 </script>
 
 <template>
-  <div
-    id="__studio_toolbar"
-    class="transition-all duration-300 ease-in-out h-[var(--toolbar-height)]"
-    part="toolbar"
-  >
-    <div class="flex gap-2 items-center">
+  <UHeader class="fixed top-0 left-0 right-0 z-50">
+    <template #title>
+      <div class="flex gap-2">
+        <UNavigationMenu
+          :items="features"
+          highlight
+        />
+      </div>
+    </template>
+
+    <template #right>
+      <UButton
+        label="Publish"
+        icon="i-lucide-save"
+        color="primary"
+        variant="solid"
+        size="sm"
+      />
+      <USeparator
+        orientation="vertical"
+        class="h-8"
+      />
       <UDropdownMenu
-        :items="userMenuItems"
         :portal="false"
+        :items="userMenuItems"
+        placeholder="Select a content"
       >
         <UButton
           color="neutral"
@@ -43,10 +79,6 @@ const userMenuItems = computed(() => [
           <span>{{ user?.name }}</span>
         </UButton>
       </UDropdownMenu>
-      <slot name="left" />
-    </div>
-    <div>
-      <slot name="right" />
-    </div>
-  </div>
+    </template>
+  </UHeader>
 </template>

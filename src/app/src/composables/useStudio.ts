@@ -2,6 +2,8 @@ import { createStorage } from 'unstorage'
 import indexedDbDriver from 'unstorage/drivers/indexedb'
 import { useGit } from './useGit'
 import { useDraftFiles } from './useDraftFiles'
+import { reactive, watch } from 'vue'
+import { createSharedComposable } from '@vueuse/core'
 
 const storage = createStorage({
   driver: indexedDbDriver({
@@ -9,7 +11,7 @@ const storage = createStorage({
   }),
 })
 
-export function useStudio() {
+export const useStudio = createSharedComposable(() => {
   const host = window.useStudioHost()
   const git = useGit({
     owner: 'owner',
@@ -35,6 +37,24 @@ export function useStudio() {
     host.requestRerender()
   })
 
+  const ui = reactive({
+    displayEditor: false,
+    displayFiles: false,
+    displayMedias: false,
+    displayConfig: false,
+    // commitPreviewVisibility: false,
+    // contentsListVisibility: false,
+  })
+
+  watch(ui, (value) => {
+    if (Object.values(value).some(value => value)) {
+      host.ui.expandSidebar()
+    }
+    else {
+      host.ui.collapseSidebar()
+    }
+  })
+
   // host.on.beforeUnload((event: BeforeUnloadEvent) => {
   //   // Ignore on development to prevent annoying dialogs
   //   if (import.meta.dev) return
@@ -53,9 +73,10 @@ export function useStudio() {
   //   return 'Sure?'
   // })
 
-  return {
+  const returnValue = {
     host,
     git,
+    ui,
     draftFiles,
     // draftMedia: {
     //   get -> DraftMediaItem
@@ -75,4 +96,6 @@ export function useStudio() {
     //   revert
     // }
   }
-}
+
+  return returnValue
+})

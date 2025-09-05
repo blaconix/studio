@@ -40,6 +40,7 @@ export default defineNuxtModule({
     })
 
     await installModule('nuxt-auth-utils')
+
     addServerHandler({
       route: '/_admin/auth/github',
       handler: runtime('./server/routes/auth/github.get.ts'),

@@ -11,10 +11,12 @@ const { data: page } = await useAsyncData('page-' + route.path, () => {
 </script>
 
 <template>
-  <div>
-    <ContentRenderer
-      v-if="page"
-      :value="page"
-    />
-  </div>
+  <UPage v-if="page">
+    <UPageBody prose>
+      <ContentRenderer
+        v-if="page"
+        :value="page"
+      />
+    </UPageBody>
+  </UPage>
 </template>

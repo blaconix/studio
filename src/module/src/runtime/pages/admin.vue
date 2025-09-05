@@ -2,41 +2,44 @@
 definePageMeta({
   layout: '',
 })
-const { loggedIn, user, clear, openInPopup } = useUserSession()
+
+const providers = [{
+  label: 'Google',
+  icon: 'i-simple-icons-google',
+  onClick: () => {
+    openInPopup('/_admin/auth/google')
+  },
+}, {
+  label: 'GitHub',
+  icon: 'i-simple-icons-github',
+  onClick: () => {
+    openInPopup('/_admin/auth/github')
+  },
+}]
+
+const { loggedIn, user, openInPopup } = useUserSession()
 
 watch(loggedIn, (newVal) => {
   if (newVal) {
     navigateTo('/')
   }
-})
+}, { immediate: true })
 </script>
 
 <template>
-  <div v-if="loggedIn">
-    <h1>Welcome {{ user.name }}!</h1>
-    <button @click="clear">
-      Logout
-    </button>
+  <div class="flex items-center justify-center mt-10">
+    <h1 v-if="loggedIn">
+      Welcome {{ user?.name }}!
+    </h1>
+    <UCard
+      v-else
+      class="w-full max-w-md"
+    >
+      <UAuthForm
+        title="Login on Nuxt Studio"
+        icon="i-lucide-user"
+        :providers="providers"
+      />
+    </UCard>
   </div>
-  <UCard
-    v-else
-    :ui="{ body: 'flex flex-col gap-4' }"
-    class="max-w-md mx-auto"
-  >
-    <h1>Not logged in</h1>
-    <UButton
-      block
-      icon="i-simple-icons-github"
-      @click="openInPopup('/_admin/auth/github')"
-    >
-      Login with GitHub
-    </UButton>
-    <UButton
-      block
-      icon="i-simple-icons-google"
-      @click="openInPopup('/_admin/auth/google')"
-    >
-      Login with Google
-    </UButton>
-  </UCard>
 </template>
