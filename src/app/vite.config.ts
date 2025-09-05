@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import uiPro from '@nuxt/ui-pro/vite'
+import ui from '@nuxt/ui/vite'
 import path from 'node:path'
 import libCss from 'vite-plugin-libcss'
 
@@ -14,8 +14,7 @@ export default defineConfig({
   },
   plugins: [
     vue(),
-    uiPro({
-      license: 'OSS',
+    ui({
       ui: {
         colors: {
           primary: 'green',
