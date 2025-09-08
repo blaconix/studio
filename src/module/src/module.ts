@@ -1,6 +1,5 @@
-import { defineNuxtModule, createResolver, addPlugin, extendViteConfig, installModule, extendPages, addServerHandler } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addPlugin, extendViteConfig, useLogger, extendPages, addServerHandler } from '@nuxt/kit'
 import { createHash } from 'crypto'
-
 import { defu } from 'defu'
 
 interface ModuleOptions {
@@ -12,22 +11,33 @@ interface ModuleOptions {
   }
 }
 
+const logger = useLogger('nuxt-studio')
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: 'nuxt-studio',
     configKey: 'contentStudio',
-    defaults: {
+    defaults: {}
+  },
+  async setup(options, nuxt) {
+    const resolver = createResolver(import.meta.url)
+    const runtime = (...args: string[]) => resolver.resolve('./runtime', ...args)  
+    options = defu(options, {
       auth: {
         github: {
           clientId: process.env.STUDIO_GITHUB_CLIENT_ID,
           clientSecret: process.env.STUDIO_GITHUB_CLIENT_SECRET
         },
       }
+    }) as ModuleOptions
+
+    if (!nuxt.options.dev) {
+      if (!options.auth?.github?.clientId && !options.auth?.github?.clientSecret) {
+        logger.warn([
+          'Nuxt Content Studio relies on GitHub OAuth to authenticate users.',
+          'Please set the `STUDIO_GITHUB_CLIENT_ID` and `STUDIO_GITHUB_CLIENT_SECRET` environment variables.',
+        ].join(' '))
+      }
     }
-  },
-  async setup(options, nuxt) {
-    const resolver = createResolver(import.meta.url)
-    const runtime = (...args: string[]) => resolver.resolve('./runtime', ...args)
 
     nuxt.options.runtimeConfig.public.contentStudio = {
       studioDevServer: process.env.STUDIO_DEV_SERVER,
