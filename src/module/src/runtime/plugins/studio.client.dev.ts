@@ -1,8 +1,7 @@
 import { useRuntimeConfig } from '#imports'
-import type { ContentStudioUser } from 'nuxt-studio/app'
 import { defineStudioActivationPlugin } from '../utils/activation'
 
-export default defineStudioActivationPlugin(async (_user: ContentStudioUser) => {
+export default defineStudioActivationPlugin(async () => {
   console.log(`
  ██████╗ ██████╗ ███╗   ██╗████████╗███████╗███╗   ██╗████████╗    ██████╗ ███████╗██╗   ██╗
 ██╔════╝██╔═══██╗████╗  ██║╚══██╔══╝██╔════╝████╗  ██║╚══██╔══╝    ██╔══██╗██╔════╝██║   ██║

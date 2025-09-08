@@ -1,7 +1,7 @@
 import { getAppManifest, useState, defineNuxtPlugin } from '#imports'
 import type { ContentStudioUser } from 'nuxt-studio/app'
 
-export function defineStudioActivationPlugin(onStudioActivation: (user: ContentStudioUser) => Promise<void>) {
+export function defineStudioActivationPlugin(onStudioActivation: () => Promise<void>) {
   return defineNuxtPlugin(async () => {
     const user = useState<ContentStudioUser | null>('content-studio-session', () => null)
 
@@ -19,7 +19,7 @@ export function defineStudioActivationPlugin(onStudioActivation: (user: ContentS
       const manifest = await getAppManifest()
       manifest.prerendered = []
 
-      await onStudioActivation(user.value)
+      await onStudioActivation()
       mounted = true
     }
     else if (mounted) {
