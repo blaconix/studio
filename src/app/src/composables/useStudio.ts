@@ -55,6 +55,23 @@ export const useStudio = createSharedComposable(() => {
     }
   })
 
+  // Exclusive panel behavior - only one panel can be open at a time
+  const panelKeys = ['displayFiles', 'displayMedias', 'displayConfig', 'displayEditor'] as const
+
+  watch(ui, (newVal, oldVal) => {
+    // Find which key changed from false to true
+    const activeKey = panelKeys.find(key => newVal[key] && !oldVal?.[key])
+
+    if (activeKey) {
+      // Close all other panels
+      panelKeys.forEach((key) => {
+        if (key !== activeKey && newVal[key]) {
+          ui[key] = false
+        }
+      })
+    }
+  })
+
   // host.on.beforeUnload((event: BeforeUnloadEvent) => {
   //   // Ignore on development to prevent annoying dialogs
   //   if (import.meta.dev) return

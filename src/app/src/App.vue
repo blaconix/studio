@@ -4,8 +4,12 @@
 // import ContentsListModal from './components/ContentsListModal.vue'
 import { useStudio } from './composables/useStudio'
 import StudioToolbar from './components/StudioToolbar.vue'
+import PanelFiles from './components/panels/PanelFiles.vue'
+import PanelMedias from './components/panels/PanelMedias.vue'
+import PanelConfig from './components/panels/PanelConfig.vue'
 // import CommitPreviewModal from './components/CommitPreviewModal.vue'
 
+// const studio = useStudio()
 const { ui } = useStudio()
 // const activeDocuments = ref<{ id: string, label: string, value: string }[]>([])
 
@@ -89,7 +93,9 @@ const { ui } = useStudio()
     <UApp :toaster="{ portal: false }">
       <StudioToolbar />
 
-      <SlideoversFiles v-if="ui.displayFiles" />
+      <PanelFiles v-model="ui.displayFiles" />
+      <PanelMedias v-model="ui.displayMedias" />
+      <PanelConfig v-model="ui.displayConfig" />
 
       <!-- <PreviewEditor
         v-model="studio.ui.displayEditor"

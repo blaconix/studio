@@ -169,7 +169,8 @@ export function useStudioHost() {
   ;(async () => {
     host.ui.activateStudio()
     // Trigger dummy query to make sure content database is loaded on the client
-    await useContentCollectionQuery('content').first().catch((e) => {
+    // TODO: browse collections and call one of them
+    await useContentCollectionQuery('docs').first().catch((e) => {
       console.error(e)
     })
     ensure(() => useNuxtApp().$contentLocalDatabase !== undefined).then(() => {
