@@ -4,7 +4,7 @@ import { useStudio } from '../../../composables/useStudio'
 
 const studio = useStudio()
 
-const user = computed(() => studio.host.user.get())
+const user = studio.host.user.get()
 
 const userMenuItems = computed(() => [
   {
