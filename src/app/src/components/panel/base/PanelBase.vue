@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import PanelBaseHeader from './PanelBaseHeader.vue'
+import PanelBaseFooter from './PanelBaseFooter.vue'
+
 defineProps<{
   title?: string
 }>()
@@ -46,30 +49,15 @@ function onLeave(el: Element, done: () => void) {
   >
     <div
       v-if="open"
-      class="fixed w-112 top-[var(--toolbar-height)] bottom-0 left-0 h-full overflow-y-auto border-r border-gray-200 bg-white"
+      class="fixed w-112 top-0 bottom-0 left-0 overflow-y-auto border-r border-gray-200 bg-white"
     >
-      <div class="flex items-center justify-between p-4 border-b border-gray-200">
-        <div class="flex-1">
-          <slot name="header">
-            <h2
-              v-if="title"
-              class="text-lg font-semibold text-gray-900"
-            >
-              {{ title }}
-            </h2>
-          </slot>
-        </div>
-        <UButton
-          icon="i-lucide-x"
-          variant="ghost"
-          size="xl"
-          @click="open = false"
-        />
-      </div>
+      <PanelBaseHeader />
 
-      <div class="flex-1">
+      <div class="min-h-[calc(100vh-var(--ui-header-height)-var(--ui-footer-height))]">
         <slot />
       </div>
+
+      <PanelBaseFooter />
     </div>
   </Transition>
 </template>

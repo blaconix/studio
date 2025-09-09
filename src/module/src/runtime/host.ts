@@ -19,13 +19,13 @@ const hostStyles: Record<string, Record<string, string>> & { css?: string } = {
   'body[data-studio-active][data-expand-sidebar]': {
     marginLeft: '440px',
   },
-  'body[data-studio-active][data-expand-toolbar]': {
-    marginTop: '60px',
-  },
-  'body[data-studio-active][data-expand-sidebar][data-expand-toolbar]': {
-    marginLeft: '440px',
-    marginTop: '60px',
-  },
+  // 'body[data-studio-active][data-expand-toolbar]': {
+  //   marginTop: '60px',
+  // },
+  // 'body[data-studio-active][data-expand-sidebar][data-expand-toolbar]': {
+  //   marginLeft: '440px',
+  //   marginTop: '60px',
+  // },
 }
 
 export function useStudioHost(user: StudioUser): StudioHost {
@@ -70,23 +70,23 @@ export function useStudioHost(user: StudioUser): StudioHost {
     ui: {
       activateStudio: () => {
         document.body.setAttribute('data-studio-active', 'true')
-        host.ui.expandToolbar()
-        host.ui.updateStyles()
+        // host.ui.expandToolbar()
+        // host.ui.updateStyles()
       },
       deactivateStudio: () => {
         document.body.removeAttribute('data-studio-active')
-        host.ui.collapseToolbar()
+        // host.ui.collapseToolbar()
         host.ui.collapseSidebar()
         host.ui.updateStyles()
       },
-      expandToolbar: () => {
-        document.body.setAttribute('data-expand-toolbar', 'true')
-        host.ui.updateStyles()
-      },
-      collapseToolbar: () => {
-        document.body.removeAttribute('data-expand-toolbar')
-        host.ui.updateStyles()
-      },
+      // expandToolbar: () => {
+      //   document.body.setAttribute('data-expand-toolbar', 'true')
+      //   host.ui.updateStyles()
+      // },
+      // collapseToolbar: () => {
+      //   document.body.removeAttribute('data-expand-toolbar')
+      //   host.ui.updateStyles()
+      // },
       expandSidebar: () => {
         document.body.setAttribute('data-expand-sidebar', 'true')
         host.ui.updateStyles()

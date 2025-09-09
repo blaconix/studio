@@ -41,5 +41,3 @@ declare global {
     useStudioHost: UseStudioHost
   }
 }
-
-// export interface ConfigItem { ... }

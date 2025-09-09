@@ -3,7 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import ui from '@nuxt/ui/vite'
 import path from 'node:path'
 import libCss from 'vite-plugin-libcss'
-import dts from "vite-plugin-dts"
+import dts from 'vite-plugin-dts'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -20,6 +20,16 @@ export default defineConfig({
         colors: {
           primary: 'green',
           neutral: 'zinc',
+        },
+        footer: {
+          slots: {
+            container: 'py-2 lg:py-1 px-1 sm:px-2 lg:px-2',
+          },
+        },
+        header: {
+          slots: {
+            container: 'px-1 sm:px-2 lg:px-2',
+          },
         },
       },
     }),

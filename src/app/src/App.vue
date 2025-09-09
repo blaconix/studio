@@ -3,14 +3,13 @@
 // import PreviewEditor from './components/PreviewEditor.vue'
 // import ContentsListModal from './components/ContentsListModal.vue'
 import { useStudio } from './composables/useStudio'
-import StudioToolbar from './components/StudioToolbar.vue'
-import PanelFiles from './components/panels/PanelFiles.vue'
-import PanelMedias from './components/panels/PanelMedias.vue'
-import PanelConfig from './components/panels/PanelConfig.vue'
+import PanelFiles from './components/panel/PanelFiles.vue'
+import PanelMedias from './components/panel/PanelMedias.vue'
+import PanelConfig from './components/panel/PanelConfig.vue'
 // import CommitPreviewModal from './components/CommitPreviewModal.vue'
 
 // const studio = useStudio()
-const { ui } = useStudio()
+const { ui: { isPanelOpen, panels } } = useStudio()
 // const activeDocuments = ref<{ id: string, label: string, value: string }[]>([])
 
 // const selectedContentId = ref<string | null>(null)
@@ -91,11 +90,21 @@ const { ui } = useStudio()
 <template>
   <Suspense>
     <UApp :toaster="{ portal: false }">
-      <StudioToolbar />
+      <PanelBase v-model="isPanelOpen">
+        <PanelFiles v-if="panels.files" />
+        <PanelMedias v-else-if="panels.medias" />
+        <PanelConfig v-else-if="panels.config" />
+      </PanelBase>
 
-      <PanelFiles v-model="ui.displayFiles" />
-      <PanelMedias v-model="ui.displayMedias" />
-      <PanelConfig v-model="ui.displayConfig" />
+      <!-- Floating Files Panel Toggle -->
+      <UButton
+        v-if="!isPanelOpen"
+        icon="i-lucide-panel-left-open"
+        size="lg"
+        color="primary"
+        class="fixed bottom-4 left-4 z-50 shadow-lg"
+        @click="panels.files = true"
+      />
 
       <!-- <PreviewEditor
         v-model="studio.ui.displayEditor"
