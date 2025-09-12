@@ -46,8 +46,6 @@ export function useDraftFiles(host: StudioHost, git: ReturnType<typeof useGit>, 
     // TODO: fix double call on open document
     item.status = getDraftStatus(document, item.originalDatabaseItem)
 
-    console.log('status upserted', item.status)
-
     await storage.setItem(id, item)
 
     const existingItem = list.value.find(item => item.id == id)
@@ -145,7 +143,6 @@ export function useDraftFiles(host: StudioHost, git: ReturnType<typeof useGit>, 
     const storedList = await storage.getKeys().then(async (keys) => {
       return Promise.all(keys.map(async (key) => {
         const item = await storage.getItem(key) as DraftFileItem
-        console.log('item', item)
         if (item.status === DraftStatus.Opened) {
           await storage.removeItem(key)
           return null

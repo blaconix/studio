@@ -47,7 +47,7 @@ export function useTree(host: StudioHost, draftFiles: ReturnType<typeof useDraft
 
   watch(draftFiles.list, async () => {
     const list = await host.document.list()
-    tree.value = buildTree(list)
+    tree.value = buildTree(list, draftFiles.list.value)
   })
 
   return {

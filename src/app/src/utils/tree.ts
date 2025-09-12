@@ -1,8 +1,8 @@
-import type { DatabaseItem, TreeItem } from '../types'
+import type { DatabaseItem, DraftFileItem, TreeItem } from '../types'
 import { withLeadingSlash } from 'ufo'
 import { stripNumericPrefix } from './string'
 
-export function buildTree(items: DatabaseItem[]):
+export function buildTree(items: DatabaseItem[], draftList: DraftFileItem[] | null):
 TreeItem[] {
   const tree: TreeItem[] = []
   const directoryMap = new Map<string, TreeItem>()
@@ -25,6 +25,11 @@ TreeItem[] {
         name: fileName,
         path: filePath,
         type: 'file',
+      }
+
+      const draftFileItem = draftList?.find(draft => draft.id === item.id)
+      if (draftFileItem) {
+        fileItem.status = draftFileItem.status
       }
 
       // Page type
@@ -91,6 +96,11 @@ TreeItem[] {
       name: stripNumericPrefix(fileName),
       path: filePath,
       type: 'file',
+    }
+
+    const draftFileItem = draftList?.find(draft => draft.id === item.id)
+    if (draftFileItem) {
+      fileItem.status = draftFileItem.status
     }
 
     if (item.path) {

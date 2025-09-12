@@ -15,22 +15,6 @@ const props = defineProps({
   //   type: Object as PropType<FileAction>,
   //   default: null,
   // },
-  // readOnly: {
-  //   type: Boolean,
-  //   default: false,
-  // },
-  // disableHover: {
-  //   type: Boolean,
-  //   default: false,
-  // },
-  // isDragged: {
-  //   type: Boolean,
-  //   default: false,
-  // },
-  // isHovered: {
-  //   type: Boolean,
-  //   default: false,
-  // },
 })
 
 const isFolder = computed(() => props.file.type === 'directory')
@@ -46,8 +30,8 @@ const fileExtensionIcon = computed(() => {
   }[ext] || 'i-mdi-file'
 })
 
-// Safelist status colors: ring-red-100, ring-green-100, ring-orange-100, ring-blue-100
-const statusColor = computed(() => props.file.status ? COLOR_STATUS_MAP[props.file.status] : 'gray')
+// Safelist status colors: bg-red-500, bg-green-500, bg-orange-500, bg-blue-500
+const statusBackgroundColor = computed(() => props.file.status ? `bg-${COLOR_STATUS_MAP[props.file.status]}-500` : 'bg-gray-500')
 </script>
 
 <template>
@@ -56,9 +40,9 @@ const statusColor = computed(() => props.file.status ? COLOR_STATUS_MAP[props.fi
     class="cursor-pointer hover:ring-gray-300 hover:dark:ring-gray-700 hover:bg-white relative w-full min-w-0"
   >
     <div
-      v-if="!file.status"
+      v-if="file.status"
       class="absolute top-2 right-2 z-10 w-3 h-3 rounded-full border-2 border-white dark:border-gray-900"
-      :class="`bg-${statusColor}-500`"
+      :class="statusBackgroundColor"
     />
     <div
       v-if="file.type === 'file'"
@@ -114,10 +98,10 @@ const statusColor = computed(() => props.file.status ? COLOR_STATUS_MAP[props.fi
             square
           />
         </UDropdown> -->
-        <FileBadge
+        <!-- <FileBadge
           v-if="file.status"
           :status="file.status"
-        />
+        /> -->
       </div>
 
       <UTooltip :text="file.path">
