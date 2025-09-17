@@ -56,6 +56,12 @@ const statusRingColor = computed(() => props.item.status ? `ring-${COLOR_STATUS_
           class="w-8 h-8 text-gray-400 dark:text-gray-500"
         />
       </div>
+      <ItemBadge
+        v-if="item.status"
+        :status="item.status"
+        class="absolute top-2 right-2"
+        size="xs"
+      />
     </div>
 
     <template #body>
@@ -81,18 +87,11 @@ const statusRingColor = computed(() => props.item.status ? `ring-${COLOR_STATUS_
         <ItemActionsDropdown :item="item" />
       </div>
 
-      <div class="flex items-center justify-between gap-3">
-        <UTooltip :text="item.path">
-          <span class="truncate leading-relaxed text-xs text-gray-400 dark:text-gray-500 block w-full">
-            {{ item.routePath || item.path }}
-          </span>
-        </UTooltip>
-
-        <ItemBadge
-          v-if="item.status"
-          :status="item.status"
-        />
-      </div>
+      <UTooltip :text="item.path">
+        <span class="truncate leading-relaxed text-xs text-gray-400 dark:text-gray-500 block w-full">
+          {{ item.routePath || item.path }}
+        </span>
+      </UTooltip>
     </template>
   </UPageCard>
 </template>

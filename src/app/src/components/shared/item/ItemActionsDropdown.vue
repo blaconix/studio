@@ -1,17 +1,23 @@
 <script setup lang="ts">
 import { computeActionItems } from '../../../utils/context'
+import { computed, type PropType } from 'vue'
+import type { TreeItem } from '../../../types'
 
-defineProps({
+const props = defineProps({
   item: {
     type: Object as PropType<TreeItem>,
     required: true,
   },
 })
+
+const actions = computed(() => {
+  return computeActionItems(props.item)
+})
 </script>
 
 <template>
   <UDropdownMenu
-    :items="computeActionItems(item)"
+    :items="actions"
     :content="{ side: 'bottom' }"
   >
     <UButton

@@ -2,7 +2,7 @@ import { createSharedComposable } from '@vueuse/core'
 import { computed } from 'vue'
 import type { useUi } from './useUi'
 import type { StudioHost, StudioAction, TreeItem } from '../types'
-import { STUDIO_ACTION_DEFINITIONS } from '../utils/context'
+import { STUDIO_ACTION_DEFINITIONS, StudioActionId } from '../utils/context'
 
 export const useContext = createSharedComposable((_host: StudioHost, ui: ReturnType<typeof useUi>) => {
   const currentFeature = computed<keyof typeof ui.panels | null>(() => Object.keys(ui.panels).find(key => ui.panels[key as keyof typeof ui.panels]) as keyof typeof ui.panels)
@@ -16,27 +16,27 @@ export const useContext = createSharedComposable((_host: StudioHost, ui: ReturnT
 
   function getActionHandler(actionId: string) {
     switch (actionId) {
-      case 'create-folder':
+      case StudioActionId.CreateFolder:
         return async (id: string) => {
           alert(`create folder ${id}`)
         }
-      case 'create-file':
+      case StudioActionId.CreateFile:
         return async ({ path, content }: { path: string, content?: string }) => {
           alert(`create file ${path} ${content}`)
         }
-      case 'revert-file':
+      case StudioActionId.RevertItem:
         return (id: string) => {
           alert(`revert file ${id}`)
         }
-      case 'rename-file':
+      case StudioActionId.RenameItem:
         return async ({ path, file }: { path: string, file: TreeItem }) => {
           alert(`rename file ${path} ${file.name}`)
         }
-      case 'delete-file':
+      case StudioActionId.DeleteItem:
         return (id: string) => {
           alert(`delete file ${id}`)
         }
-      case 'duplicate-file':
+      case StudioActionId.DuplicateItem:
         return async (id: string) => {
           alert(`duplicate file ${id}`)
         }

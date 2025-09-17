@@ -3,6 +3,8 @@ import { withLeadingSlash } from 'ufo'
 import { stripNumericPrefix } from './string'
 import type { RouteLocationNormalized } from 'vue-router'
 
+export const ROOT_ITEM: TreeItem = { id: 'root', name: 'content', path: '../', type: 'root' }
+
 export function buildTree(items: DatabaseItem[], draftList: DraftFileItem[] | null):
 TreeItem[] {
   const tree: TreeItem[] = []

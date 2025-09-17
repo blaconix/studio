@@ -14,10 +14,6 @@ defineProps({
     type: Array as PropType<TreeItem[]>,
     default: () => [],
   },
-  currentTreeItem: {
-    type: Object as PropType<TreeItem | null>,
-    default: null,
-  },
 })
 </script>
 

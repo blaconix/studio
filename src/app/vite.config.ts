@@ -18,7 +18,7 @@ export default defineConfig({
     ui({
       ui: {
         colors: {
-          primary: 'green',
+          primary: 'neutral',
           neutral: 'zinc',
         },
         footer: {
@@ -65,6 +65,11 @@ export default defineConfig({
           },
         },
         dropdownMenu: {
+          defaultVariants: {
+            size: 'sm',
+          },
+        },
+        badge: {
           defaultVariants: {
             size: 'sm',
           },

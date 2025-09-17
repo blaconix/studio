@@ -10,26 +10,24 @@ const fileTree = computed(() => (tree.current.value || []).filter(f => f.type ==
 </script>
 
 <template>
-  <!-- TODO: TO check => Use flex-col-reverse to fix an issue of z-index with popover in absolute position (actions dropdwon) -->
-  <div class="flex flex-col h-full">
-    <PanelContentEditor
-      v-if="tree.currentItem.value?.type === 'file' && draftFiles.current.value"
-      :db-item="draftFiles.current.value.document as DatabasePageItem"
+  <PanelContentEditor
+    v-if="tree.currentItem.value.type === 'file' && draftFiles.current.value"
+    :db-item="draftFiles.current.value.document as DatabasePageItem"
+  />
+  <div
+    v-else
+    class="flex flex-col"
+  >
+    <PanelContentTree
+      v-if="folderTree?.length > 0"
+      class="mb-4"
+      :tree="folderTree"
+      type="directory"
     />
-    <template v-else>
-      <PanelContentTree
-        v-if="folderTree?.length > 0"
-        class="mb-4"
-        :tree="folderTree"
-        :current-tree-item="tree.currentItem.value"
-        type="directory"
-      />
-      <PanelContentTree
-        v-if="fileTree?.length > 0"
-        :tree="fileTree"
-        :current-tree-item="tree.currentItem.value"
-        type="file"
-      />
-    </template>
+    <PanelContentTree
+      v-if="fileTree?.length > 0"
+      :tree="fileTree"
+      type="file"
+    />
   </div>
 </template>

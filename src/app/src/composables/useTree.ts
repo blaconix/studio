@@ -1,15 +1,15 @@
 import type { StudioHost, TreeItem } from '../types'
 import { ref, watch, computed } from 'vue'
 import type { useDraftFiles } from './useDraftFiles'
-import { findParentFromId, buildTree, findItemFromRoute } from '../utils/tree'
+import { findParentFromId, buildTree, findItemFromRoute, ROOT_ITEM } from '../utils/tree'
 import type { RouteLocationNormalized } from 'vue-router'
 
 export function useTree(host: StudioHost, draftFiles: ReturnType<typeof useDraftFiles>) {
   const tree = ref<TreeItem[]>([])
-  const currentItem = ref<TreeItem | null>(null)
+  const currentItem = ref<TreeItem>(ROOT_ITEM)
 
   const currentTree = computed<TreeItem[]>(() => {
-    if (!currentItem.value) {
+    if (currentItem.value.id === ROOT_ITEM.id) {
       return tree.value
     }
 
@@ -27,13 +27,13 @@ export function useTree(host: StudioHost, draftFiles: ReturnType<typeof useDraft
   })
 
   // const parentItem = computed<TreeItem | null>(() => {
-  //   if (!currentItem.value) return null
+  //   if (currentItem.value.id === ROOT_ITEM.id) return null
 
   //   const parent = findParentFromId(tree.value, currentItem.value.id)
-  //   return parent || { name: 'content', path: '../', type: 'directory' } as TreeItem
+  //   return parent || ROOT_ITEM
   // })
 
-  async function selectItem(item: TreeItem | null) {
+  async function selectItem(item: TreeItem) {
     currentItem.value = item
     if (item?.type === 'file') {
       host.app.navigateTo(item.routePath!)

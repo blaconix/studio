@@ -4,7 +4,7 @@ export interface TreeItem {
   id: string
   name: string
   path: string
-  type: 'file' | 'directory'
+  type: 'file' | 'directory' | 'root'
   status?: DraftStatus
   fileType?: 'page' | 'data'
   routePath?: string
