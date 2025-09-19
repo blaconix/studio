@@ -12,7 +12,7 @@ export async function defineStudioActivationPlugin(onStudioActivation: () => Pro
   if (user.value?.email) {
     // Initialize host
     const host = await import('../host').then(m => m.useStudioHost)
-    window.useStudioHost = () => host(user.value)
+    window.useStudioHost = () => host(user.value!)
 
     // Disable prerendering for Studio
     const manifest = await getAppManifest()
