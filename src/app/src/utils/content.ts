@@ -37,7 +37,6 @@ export function removeReservedKeysFromDocument(document: DatabasePageItem) {
   return result
 }
 
-// TODO: check difference between MDCRoot and MarkdownRoot
 export async function generateContentFromDocument(document: DatabasePageItem): Promise<string | null> {
-  return await stringifyMarkdown(document.body as MDCRoot, removeReservedKeysFromDocument(document))
+  return await stringifyMarkdown(document.body as unknown as MDCRoot, removeReservedKeysFromDocument(document))
 }

@@ -5,20 +5,19 @@ import type { RouteLocationNormalized } from 'vue-router'
 
 export const ROOT_ITEM: TreeItem = { id: 'root', name: 'content', fsPath: '/', type: 'root' }
 
-export function buildTree(dbItems: DatabaseItem[], draftList: DraftFileItem[] | null):
+export function buildTree(dbItems: (DatabaseItem & { fsPath: string })[], draftList: DraftFileItem[] | null):
 TreeItem[] {
   const tree: TreeItem[] = []
   const directoryMap = new Map<string, TreeItem>()
 
   for (const dbItem of dbItems) {
-    const fileType = dbItem.path ? 'page' : 'data'
-    // Use stem to determine tree structure
-    const stemSegments = dbItem.stem.split('/')
-    const directorySegments = stemSegments.slice(0, -1)
-    let fileName = stemSegments[stemSegments.length - 1]
+    const collectionType = dbItem.path ? 'page' : 'data'
+    const fsPathSegments = dbItem.fsPath.split('/')
+    const directorySegments = fsPathSegments.slice(0, -1)
+    let fileName = fsPathSegments[fsPathSegments.length - 1].replace(/\.[^/.]+$/, '')
 
     let routePathSegments: string[] | undefined
-    if (fileType === 'page') {
+    if (collectionType === 'page') {
       routePathSegments = (dbItem.path as string).split('/').slice(0, -1).filter(Boolean)
     }
 
@@ -27,17 +26,15 @@ TreeItem[] {
     ******************/
     if (directorySegments.length === 0) {
       fileName = fileName === 'index' ? 'home' : stripNumericPrefix(fileName)
-      const fsPath = withLeadingSlash(`${dbItem.stem}.${dbItem.extension}`)
 
       const fileItem: TreeItem = {
         id: dbItem.id,
         name: fileName,
-        fsPath,
+        fsPath: dbItem.fsPath,
         type: 'file',
-        fileType,
       }
 
-      if (fileType === 'page') {
+      if (collectionType === 'page') {
         fileItem.routePath = dbItem.path as string
       }
 
@@ -55,12 +52,12 @@ TreeItem[] {
     ******************/
     function dirIdBuilder(index: number) {
       const idSegments = dbItem.id.split('/')
-      const stemVsIdGap = idSegments.length - stemSegments.length
+      const stemVsIdGap = idSegments.length - fsPathSegments.length
       return idSegments.slice(0, index + stemVsIdGap + 1).join('/')
     }
 
     function dirFsPathBuilder(index: number) {
-      return withLeadingSlash(directorySegments.slice(0, index + 1).join('/'))
+      return directorySegments.slice(0, index + 1).join('/')
     }
 
     function dirRoutePathBuilder(index: number) {
@@ -84,7 +81,7 @@ TreeItem[] {
           children: [],
         }
 
-        if (fileType === 'page') {
+        if (collectionType === 'page') {
           directory.routePath = dirRoutePathBuilder(i)
         }
 
@@ -104,7 +101,7 @@ TreeItem[] {
     const fileItem: TreeItem = {
       id: dbItem.id,
       name: stripNumericPrefix(fileName),
-      fsPath: withLeadingSlash(`${dbItem.stem}.${dbItem.extension}`),
+      fsPath: dbItem.fsPath,
       type: 'file',
     }
 
@@ -114,11 +111,7 @@ TreeItem[] {
     }
 
     if (dbItem.path) {
-      fileItem.fileType = 'page'
       fileItem.routePath = dbItem.path as string
-    }
-    else {
-      fileItem.fileType = 'data'
     }
 
     directoryChildren.push(fileItem)
@@ -127,6 +120,23 @@ TreeItem[] {
   calculateDirectoryStatuses(tree)
 
   return tree
+}
+
+export function findItemFromId(tree: TreeItem[], id: string): TreeItem | null {
+  for (const item of tree) {
+    if (item.id === id) {
+      return item
+    }
+
+    if (item.children) {
+      const foundInChildren = findItemFromId(item.children, id)
+      if (foundInChildren) {
+        return foundInChildren
+      }
+    }
+  }
+
+  return null
 }
 
 export function findParentFromId(tree: TreeItem[], id: string): TreeItem | null {

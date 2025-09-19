@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type { StorageValue, Storage } from 'unstorage'
 import type { DatabaseItem, DraftFileItem, StudioHost, GithubFile, DatabasePageItem } from '../types'
 import { DraftStatus } from '../types/draft'
@@ -9,6 +9,11 @@ import { getDraftStatus } from '../utils/draft'
 export function useDraftFiles(host: StudioHost, git: ReturnType<typeof useGit>, storage: Storage<StorageValue>) {
   const list = ref<DraftFileItem[]>([])
   const current = ref<DraftFileItem | null>(null)
+
+  // Used to detect changes in draft status to rebuild the tree
+  const listHash = computed<string>(() => {
+    return list.value.map(item => `${item.id}-${item.status}`).join(',')
+  })
 
   async function get(id: string, { generateContent = false }: { generateContent?: boolean } = {}) {
     const item = await storage.getItem(id) as DraftFileItem
@@ -179,6 +184,7 @@ export function useDraftFiles(host: StudioHost, git: ReturnType<typeof useGit>, 
     revert,
     revertAll,
     list,
+    listHash,
     load,
     current,
     select,

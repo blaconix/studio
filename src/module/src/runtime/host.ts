@@ -172,7 +172,6 @@ export function useStudioHost(user: StudioUser): StudioHost {
         return document
       },
       upsert: async (id: string, upsertedDocument: CollectionItemBase) => {
-        console.log('upsert', id, upsertedDocument)
         id = id.replace(/:/g, '/')
 
         const collection = getCollectionInfo(id, useContentCollections()).collection

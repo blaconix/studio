@@ -1,10 +1,11 @@
 // import type { ParsedContentFile } from '@nuxt/content'
 import { parseMarkdown } from '@nuxtjs/mdc/runtime'
 import { generateStemFromFsPath } from './collections'
-import type { MarkdownRoot, ParsedContentFile } from '@nuxt/content'
+import type { MarkdownRoot } from '@nuxt/content'
 import { omit } from './object'
+import type { DatabaseItem } from 'nuxt-studio/app'
 
-export function removeReservedKeysFromDocument(document: ParsedContentFile) {
+export function removeReservedKeysFromDocument(document: DatabaseItem) {
   const result = omit(document, ['id', 'stem', 'extension', '__hash__', 'path', 'body', 'meta'])
   // Default value of navigation is true, so we can safely remove it
   if (result.navigation === true) {
@@ -30,7 +31,8 @@ export function removeReservedKeysFromDocument(document: ParsedContentFile) {
   return result
 }
 
-export async function generateDocumentFromContent(id: string, fsPath: string, routePath: string, content: string): Promise<ParsedContentFile> {
+export async function generateDocumentFromContent(id: string, fsPath: string, routePath: string, content: string): Promise<DatabaseItem> {
+  // TODO expose document creation logic from content module and use it there
   const stem = generateStemFromFsPath(fsPath)
 
   const parsed = await parseMarkdown(content)
@@ -48,7 +50,8 @@ export async function generateDocumentFromContent(id: string, fsPath: string, ro
     ...parsed.data,
     excerpt: parsed.excerpt,
     body: {
-      ...(parsed.body as MarkdownRoot),
+      // TODO: fix type
+      ...(parsed.body as unknown as MarkdownRoot),
       toc: parsed.toc,
     },
   }

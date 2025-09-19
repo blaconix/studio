@@ -6,7 +6,6 @@ export interface TreeItem {
   fsPath: string
   type: 'file' | 'directory' | 'root'
   status?: DraftStatus
-  fileType?: 'page' | 'data'
   routePath?: string
   children?: TreeItem[]
 }

@@ -1,14 +1,16 @@
 import { createSharedComposable } from '@vueuse/core'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type { useUi } from './useUi'
 import { type CreateFileParams, type StudioHost, type StudioAction, type TreeItem, StudioItemActionId } from '../types'
 import { oneStepActions, STUDIO_ITEM_ACTION_DEFINITIONS, twoStepActions } from '../utils/context'
 import type { useDraftFiles } from './useDraftFiles'
+import type { useTree } from './useTree'
 
 export const useContext = createSharedComposable((
   host: StudioHost,
   ui: ReturnType<typeof useUi>,
   draftFiles: ReturnType<typeof useDraftFiles>,
+  tree: ReturnType<typeof useTree>,
 ) => {
   const actionInProgress = ref<StudioItemActionId | null>(null)
   const currentFeature = computed<keyof typeof ui.panels | null>(() =>
@@ -45,14 +47,19 @@ export const useContext = createSharedComposable((
 
   const itemActionHandler: Record<StudioItemActionId, (...args: any) => Promise<void>> = {
     [StudioItemActionId.CreateFolder]: async (id: string) => {
-      console.log('create folder', id)
       alert(`create folder ${id}`)
     },
     [StudioItemActionId.CreateFile]: async ({ fsPath, routePath, content }: CreateFileParams) => {
       const document = await host.document.create(fsPath, routePath, content)
-      await draftFiles.upsert(document.id, document)
+      const draftItem = await draftFiles.upsert(document.id, document)
 
-      alert(`created file ${fsPath} ${content} !`)
+      // Wait for tree to finish building, then select the new file
+      const waitForTreeToBeUpdated = watch(tree.isTreeBuilding, (isBuilding) => {
+        if (!isBuilding) {
+          tree.selectItemByDraftFile(draftItem)
+          waitForTreeToBeUpdated.stop()
+        }
+      }, { immediate: true })
     },
     [StudioItemActionId.RevertItem]: async (id: string) => {
       alert(`revert file ${id}`)

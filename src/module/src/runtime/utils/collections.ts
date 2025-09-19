@@ -63,7 +63,7 @@ export function getCollectionSource(id: string, collection: CollectionInfo) {
   const path = rest.join('/')
 
   const matchedSource = collection.source.find((source) => {
-    const include = minimatch(path, source.include)
+    const include = minimatch(path, source.include, { dot: true })
     const exclude = source.exclude?.some(exclude => minimatch(path, exclude))
 
     return include && !exclude
@@ -72,18 +72,19 @@ export function getCollectionSource(id: string, collection: CollectionInfo) {
   return matchedSource
 }
 
-export function getFsPath(id: string, collection: CollectionInfo['source'][0]) {
+export function getFsPath(id: string, source: CollectionInfo['source'][0]) {
   const [_, ...rest] = id.split(/[/:]/)
   const path = rest.join('/')
 
-  const { fixed } = parseSourceBase(collection)
+  const { fixed } = parseSourceBase(source)
 
-  return join('content', fixed, path)
+  return join(fixed, path)
 }
 
 export function getCollectionInfo(id: string, collections: Record<string, CollectionInfo>) {
   const collection = getCollection(id.split(/[/:]/)[0]!, collections)
   const source = getCollectionSource(id, collection)
+
   const fsPath = getFsPath(id, source!)
 
   return {

@@ -1,12 +1,13 @@
-import type { StudioHost, TreeItem } from '../types'
+import type { DraftFileItem, StudioHost, TreeItem } from '../types'
 import { ref, watch, computed } from 'vue'
 import type { useDraftFiles } from './useDraftFiles'
-import { buildTree, findItemFromRoute, ROOT_ITEM } from '../utils/tree'
+import { buildTree, findItemFromId, findItemFromRoute, ROOT_ITEM } from '../utils/tree'
 import type { RouteLocationNormalized } from 'vue-router'
 
 export function useTree(host: StudioHost, draftFiles: ReturnType<typeof useDraftFiles>) {
   const tree = ref<TreeItem[]>([])
   const currentItem = ref<TreeItem>(ROOT_ITEM)
+  const isTreeBuilding = ref<boolean>(false)
 
   const currentTree = computed<TreeItem[]>(() => {
     if (currentItem.value.id === ROOT_ITEM.id) {
@@ -44,7 +45,7 @@ export function useTree(host: StudioHost, draftFiles: ReturnType<typeof useDraft
     }
   }
 
-  async function selectByRoute(route: RouteLocationNormalized) {
+  async function selectItemByRoute(route: RouteLocationNormalized) {
     const item = findItemFromRoute(tree.value, route)
     if (!item) return
     currentItem.value = item
@@ -57,19 +58,36 @@ export function useTree(host: StudioHost, draftFiles: ReturnType<typeof useDraft
     draftFiles.select(draftFileItem)
   }
 
-  // TODO: Improve performance and do not list all files?
-  watch(draftFiles.list, async () => {
+  async function selectItemByDraftFile(item: DraftFileItem) {
+    const treeItem = findItemFromId(tree.value, item.id)
+    if (treeItem) {
+      selectItem(treeItem)
+    }
+  }
+
+  watch(draftFiles.listHash, async () => {
+    isTreeBuilding.value = true
     const list = await host.document.list()
-    console.log('list', list)
-    tree.value = buildTree(list, draftFiles.list.value)
-  }, { deep: true })
+    const listWithFsPath = list.map((item) => {
+      const fsPath = host.document.getFileSystemPath(item.id)
+      return {
+        ...item,
+        fsPath,
+      }
+    })
+
+    tree.value = buildTree(listWithFsPath, draftFiles.list.value)
+    isTreeBuilding.value = false
+  }, { immediate: true })
 
   return {
     root: tree,
     current: currentTree,
     currentItem,
+    isTreeBuilding,
     // parentItem,
     selectItem,
-    selectByRoute,
+    selectItemByRoute,
+    selectItemByDraftFile,
   }
 }
