@@ -25,7 +25,7 @@ export const useDraftFiles = createSharedComposable((host: StudioHost, git: Retu
     return item
   }
 
-  async function create(document: DatabaseItem) {
+  async function create(document: DatabaseItem, status: DraftStatus = DraftStatus.Created) {
     const existingItem = list.value.find(item => item.id === document.id)
     if (existingItem) {
       throw new Error(`Draft file already exists for document ${document.id}`)
@@ -39,7 +39,7 @@ export const useDraftFiles = createSharedComposable((host: StudioHost, git: Retu
       fsPath,
       originalDatabaseItem: document,
       originalGithubFile,
-      status: DraftStatus.Opened,
+      status,
       document,
     }
 
@@ -206,7 +206,7 @@ export const useDraftFiles = createSharedComposable((host: StudioHost, git: Retu
       throw new Error(`Cannot select item: no corresponding database entry found for id ${id}`)
     }
 
-    const draftItem = await create(dbItem)
+    const draftItem = await create(dbItem, DraftStatus.Opened)
     select(draftItem)
   }
 

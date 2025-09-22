@@ -6,6 +6,7 @@ import type { TreeItem } from '../../../types'
 import { useStudio } from '../../../composables/useStudio'
 import { findParentFromId, ROOT_ITEM } from '../../../utils/tree'
 import { FEATURE_DISPLAY_MAP } from '../../../utils/context'
+import { DraftStatus } from '../../../types/draft'
 
 const { tree: treeApi, context } = useStudio()
 
@@ -76,16 +77,22 @@ const items = computed<BreadcrumbItem[]>(() => {
 </script>
 
 <template>
-  <UBreadcrumb :items="items">
-    <template #ellipsis="{ item }">
-      <UDropdownMenu :items="item.children">
-        <UButton
-          :icon="item.icon"
-          color="neutral"
-          variant="link"
-          class="p-0.5"
-        />
-      </UDropdownMenu>
-    </template>
-  </UBreadcrumb>
+  <div class="flex gap-2">
+    <UBreadcrumb :items="items">
+      <template #ellipsis="{ item }">
+        <UDropdownMenu :items="item.children">
+          <UButton
+            :icon="item.icon"
+            color="neutral"
+            variant="link"
+            class="p-0.5"
+          />
+        </UDropdownMenu>
+      </template>
+    </UBreadcrumb>
+    <ItemBadge
+      v-if="currentItem.status && currentItem.status !== DraftStatus.Opened"
+      :status="currentItem.status"
+    />
+  </div>
 </template>

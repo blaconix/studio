@@ -30,7 +30,7 @@ export const useStudio = createSharedComposable(() => {
   const ui = useUi(host)
   const draftFiles = useDraftFiles(host, git, storage)
   const tree = useTree(host, draftFiles)
-  const context = useContext(host, ui, draftFiles)
+  const context = useContext(host, ui, draftFiles, tree)
 
   host.on.mounted(async () => {
     await draftFiles.load()

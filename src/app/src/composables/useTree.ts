@@ -56,6 +56,14 @@ export const useTree = createSharedComposable((host: StudioHost, draftFiles: Ret
     select(item)
   }
 
+  async function selectItemById(id: string) {
+    const treeItem = findItemFromId(tree.value, id)
+
+    if (!treeItem || treeItem.id === currentItem.value.id) return
+
+    select(treeItem)
+  }
+
   hooks.hook('studio:draft:updated', async () => {
     const list = await host.document.list()
     const listWithFsPath = list.map((item) => {
@@ -82,5 +90,6 @@ export const useTree = createSharedComposable((host: StudioHost, draftFiles: Ret
     // parentItem,
     select,
     selectByRoute,
+    selectItemById,
   }
 })

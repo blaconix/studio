@@ -5,11 +5,13 @@ import { type CreateFileParams, type StudioHost, type StudioAction, type TreeIte
 import { oneStepActions, STUDIO_ITEM_ACTION_DEFINITIONS, twoStepActions } from '../utils/context'
 import type { useDraftFiles } from './useDraftFiles'
 import { useModal } from './useModal'
+import type { useTree } from './useTree'
 
 export const useContext = createSharedComposable((
   host: StudioHost,
   ui: ReturnType<typeof useUi>,
   draftFiles: ReturnType<typeof useDraftFiles>,
+  tree: ReturnType<typeof useTree>,
 ) => {
   const modal = useModal()
 
@@ -53,7 +55,7 @@ export const useContext = createSharedComposable((
     [StudioItemActionId.CreateFile]: async ({ fsPath, routePath, content }: CreateFileParams) => {
       const document = await host.document.create(fsPath, routePath, content)
       const draftItem = await draftFiles.create(document)
-      draftFiles.select(draftItem)
+      tree.selectItemById(draftItem.id)
     },
     [StudioItemActionId.RevertItem]: async (id: string) => {
       modal.openConfirmActionModal(id, StudioItemActionId.RevertItem, async () => await draftFiles.revert(id))
