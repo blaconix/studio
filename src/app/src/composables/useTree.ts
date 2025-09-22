@@ -38,7 +38,7 @@ export const useTree = createSharedComposable((host: StudioHost, draftFiles: Ret
   // })
 
   async function select(item: TreeItem) {
-    currentItem.value = item
+    currentItem.value = item || ROOT_ITEM
     if (item?.type === 'file') {
       host.app.navigateTo(item.routePath!)
       await draftFiles.selectById(item.id)
@@ -78,9 +78,7 @@ export const useTree = createSharedComposable((host: StudioHost, draftFiles: Ret
     tree.value = buildTree(listWithFsPath, draftFiles.list.value)
 
     // Reselect current item to update status
-    if (currentItem.value.id !== ROOT_ITEM.id) {
-      select(findItemFromId(tree.value, currentItem.value.id)!)
-    }
+    select(findItemFromId(tree.value, currentItem.value.id)!)
   })
 
   return {

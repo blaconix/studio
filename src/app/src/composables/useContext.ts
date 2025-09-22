@@ -58,7 +58,7 @@ export const useContext = createSharedComposable((
       tree.selectItemById(draftItem.id)
     },
     [StudioItemActionId.RevertItem]: async (id: string) => {
-      modal.openConfirmActionModal(id, StudioItemActionId.RevertItem, async () => await draftFiles.revert(id))
+      modal.openConfirmActionModal(id, StudioItemActionId.RevertItem, () => draftFiles.revert(id))
     },
     [StudioItemActionId.RenameItem]: async ({ path, file }: { path: string, file: TreeItem }) => {
       alert(`rename file ${path} ${file.name}`)

@@ -47,7 +47,10 @@ const document = computed<DatabasePageItem>({
 
 <template>
   <div class="h-full">
-    <PanelContentEditorCode v-model="(document as DatabasePageItem)" />
+    <PanelContentEditorCode
+      v-model="document"
+      :draft-item="draftItem"
+    />
   </div>
   <!-- <MDCEditorAST v-model="document" /> -->
 </template>

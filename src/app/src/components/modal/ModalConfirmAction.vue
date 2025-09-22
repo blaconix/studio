@@ -11,11 +11,13 @@ const props = defineProps({
     type: String as PropType<StudioItemActionId>,
     required: true,
   },
-  successCallback: {
-    type: Function as PropType<() => void>,
+  actionCallback: {
+    type: Function as PropType<() => Promise<void>>,
     required: true,
   },
 })
+
+const toast = useToast()
 
 const name = computed(() => {
   return props.itemId.split('/').pop()
@@ -35,8 +37,28 @@ const successLabelMap = {
   [StudioItemActionId.RevertItem]: 'Revert changes',
 } as Record<StudioItemActionId, string>
 
+const successMessageMap = {
+  [StudioItemActionId.RevertItem]: 'Changes reverted successfully!',
+} as Record<StudioItemActionId, string>
+
+const errorMessageMap = {
+  [StudioItemActionId.RevertItem]: 'Something went wrong while reverting your file.',
+} as Record<StudioItemActionId, string>
+
 const handleConfirm = async () => {
-  props.successCallback()
+  try {
+    await props.actionCallback()
+    toast.add({
+      title: successMessageMap[props.actionId],
+      color: 'success',
+    })
+  }
+  catch {
+    toast.add({
+      title: errorMessageMap[props.actionId],
+      color: 'error',
+    })
+  }
   emit('close')
 }
 </script>
@@ -47,10 +69,6 @@ const handleConfirm = async () => {
     :description="descriptionMap[actionId]"
     :ui="{ footer: 'justify-end' }"
   >
-    <!-- <template #body>
-      <Placeholder class="h-48" />
-    </template> -->
-
     <template #footer>
       <div class="flex gap-2">
         <UButton

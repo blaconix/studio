@@ -7,11 +7,11 @@ export const useModal = createSharedComposable(() => {
 
   const modal = overlay.create(ModalConfirmAction)
 
-  async function openConfirmActionModal(itemId: string, actionId: StudioItemActionId, successCallback: () => void) {
+  async function openConfirmActionModal(itemId: string, actionId: StudioItemActionId, actionCallback: () => Promise<void>) {
     modal.open({
       itemId,
       actionId,
-      successCallback,
+      actionCallback,
     })
   }
 

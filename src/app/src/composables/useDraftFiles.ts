@@ -132,14 +132,15 @@ export const useDraftFiles = createSharedComposable((host: StudioHost, git: Retu
     }
 
     if (existingItem.status === DraftStatus.Created) {
+      await host.document.delete(id)
       await storage.removeItem(id)
       list.value = list.value.filter(item => item.id !== id)
-      await host.document.delete(id)
     }
     else {
       await host.document.upsert(id, existingItem.originalDatabaseItem!)
       existingItem.status = DraftStatus.Opened
       existingItem.document = existingItem.originalDatabaseItem
+      await storage.setItem(id, existingItem)
     }
 
     await hooks.callHook('studio:draft:updated')
