@@ -1,12 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref, shallowRef, watch } from 'vue'
 import type { DatabasePageItem } from '../../../../types'
-import { parseMarkdown, stringifyMarkdown } from '@nuxtjs/mdc/runtime'
-import { decompressTree, compressTree } from '@nuxt/content/runtime'
-import type { MDCRoot } from '@nuxtjs/mdc'
-import type { MarkdownRoot } from '@nuxt/content'
-import { removeReservedKeysFromDocument } from '../../../../utils/content'
 import { setupMonaco, type Editor } from '../../../../utils/monaco'
+import { generateContentFromDocument, parseContent, pickReservedKeysFromDocument } from '../../../../utils/content'
 
 const document = defineModel<DatabasePageItem>()
 
@@ -16,9 +12,7 @@ const content = ref<string>('')
 
 watch(() => document.value?.id, async () => {
   if (document.value?.body) {
-    const tree = document.value.body.type === 'minimark' ? decompressTree(document.value.body) : (document.value.body as unknown as MDCRoot)
-    const data = removeReservedKeysFromDocument(document.value)
-    stringifyMarkdown(tree, data).then((md) => {
+    generateContentFromDocument(document.value).then((md) => {
       content.value = md || ''
 
       if (editor.value) {
@@ -35,11 +29,11 @@ onMounted(async () => {
   editor.value = monaco.createEditor(editorRef.value)
   editor.value.onDidChangeModelContent(() => {
     content.value = editor.value!.getModel()!.getValue() || ''
-    parseMarkdown(content.value).then((tree) => {
+
+    parseContent(document.value!.id, content.value).then((doc) => {
       document.value = {
-        ...document.value,
-        body: tree.body.type === 'root' ? compressTree(tree.body) : tree.body as never as MarkdownRoot,
-        ...tree.data,
+        ...pickReservedKeysFromDocument(document.value!),
+        ...doc
       } as DatabasePageItem
     })
   })
