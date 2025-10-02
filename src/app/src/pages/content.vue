@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useStudio } from '../composables/useStudio'
+import type { TreeItem } from '../types'
 import { StudioItemActionId, TreeStatus } from '../types'
 
 const { documentTree, context } = useStudio()
@@ -22,6 +23,48 @@ const showFileForm = computed(() => {
       context.actionInProgress.value?.id === StudioItemActionId.RenameItem
       && context.actionInProgress.value?.item?.type === 'file')
 })
+
+function fileIcon(id: string) {
+  return {
+    md: 'i-ph-markdown-logo',
+    yaml: 'i-fluent-document-yml-20-regular',
+    yml: 'i-fluent-document-yml-20-regular',
+    json: 'i-lucide-file-json',
+  }[id.split('.').pop() as string] || 'i-lucide-file-text'
+}
+
+function mapTreeToItem(tree: TreeItem[]) {
+  return tree.map((treeItem) => {
+    if (treeItem.type === 'file') {
+      return {
+        type: 'file',
+        label: treeItem.name,
+        icon: fileIcon(treeItem.id),
+        onSelect: () => context.activeTree.value.select(treeItem),
+      }
+    }
+    return {
+      type: 'directory',
+      label: treeItem.name,
+      icon: 'i-lucide-folder',
+      // onSelect: () => context.activeTree.value.select(treeItem),
+      children: treeItem.children ? mapTreeToItem(treeItem.children) : [],
+    }
+  }).sort((a) => {
+    // sort by directory first
+    if (a.type === 'directory') {
+      return -1
+    }
+    return 1
+  })
+}
+
+const items = computed(() => {
+  if (documentTree.currentItem.value.type === 'file') {
+    return []
+  }
+  return mapTreeToItem(documentTree.current.value)
+})
 </script>
 
 <template>
@@ -36,21 +79,12 @@ const showFileForm = computed(() => {
       :read-only="documentTree.currentItem.value.status === TreeStatus.Deleted"
     />
     <div
-      v-else
-      class="flex flex-col p-4"
+      v-show="documentTree.currentItem.value.type !== 'file'"
+      class="flex flex-col p-1.5 text-default"
     >
-      <ItemTree
-        v-if="folderTree?.length > 0 || showFolderForm"
-        class="mb-2"
-        :tree="folderTree"
-        :show-form="showFolderForm"
-        type="directory"
-      />
-      <ItemTree
-        v-if="fileTree?.length > 0 || showFileForm"
-        :tree="fileTree"
-        :show-form="showFileForm"
-        type="file"
+      <UTree
+        :items="items"
+        color="neutral"
       />
     </div>
   </div>

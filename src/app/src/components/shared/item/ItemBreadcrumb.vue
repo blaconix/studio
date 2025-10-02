@@ -42,7 +42,7 @@ const items = computed<BreadcrumbItem[]>(() => {
   const allItems = [rootItem, ...breadcrumbItems]
 
   // Handle ellipsis dropdown
-  if (allItems.length > 3) {
+  if (allItems.length > 5) {
     const firstItem = allItems[0]
     const lastItem = allItems[allItems.length - 1]
     const hiddenItems = allItems.slice(1, -1)
