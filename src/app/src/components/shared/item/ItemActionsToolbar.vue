@@ -5,8 +5,10 @@ import { useStudio } from '../../../composables/useStudio'
 import type { StudioAction } from '../../../types'
 import { StudioItemActionId } from '../../../types'
 import { MEDIA_EXTENSIONS } from '../../../utils/file'
+import { checkExistingFiles } from '../../../utils/media'
 
-const { context } = useStudio()
+const { context, host } = useStudio()
+
 const fileInputRef = ref<HTMLInputElement>()
 const toolbarRef = ref<HTMLElement>()
 const pendingAction = ref<StudioAction<StudioItemActionId> | null>(null)
@@ -52,18 +54,6 @@ const actions = computed(() => {
   })
 })
 
-const handleFileSelection = (event: Event) => {
-  const target = event.target as HTMLInputElement
-
-  if (target.files && target.files.length > 0) {
-    context.itemActionHandler[StudioItemActionId.UploadMedia]({
-      parentFsPath: item.value.fsPath,
-      files: Array.from(target.files),
-    })
-    target.value = ''
-  }
-}
-
 const actionHandler = (action: StudioAction<StudioItemActionId> & { isPending?: boolean, isOneStepAction?: boolean, isLoading?: boolean }, event: Event) => {
   // Stop propagation to prevent click outside handler from triggering
   event.stopPropagation()
@@ -105,6 +95,29 @@ const actionHandler = (action: StudioAction<StudioItemActionId> & { isPending?: 
   else {
     pendingAction.value = action
   }
+}
+
+const handleFileSelection = async (event: Event) => {
+  const target = event.target as HTMLInputElement
+
+  const files = Array.from(target.files || [])
+  const parentFsPath = item.value.fsPath
+  const existingPath = checkExistingFiles(await host.media.list(), files, parentFsPath)
+  if (existingPath) {
+    console.error(`File already exists: ${existingPath}`)
+    return
+  }
+
+  try {
+    await context.itemActionHandler[StudioItemActionId.UploadMedia]({
+      parentFsPath,
+      files,
+    })
+  }
+  catch (error) {
+    console.error('Media upload error:', error)
+  }
+  target.value = ''
 }
 
 const handleClickOutside = () => {

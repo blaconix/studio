@@ -2,8 +2,9 @@
 import { computed, ref } from 'vue'
 import { useStudio } from '../composables/useStudio'
 import { StudioItemActionId, StudioFeature } from '../types'
+import { checkExistingFiles } from '../utils/media'
 
-const { context } = useStudio()
+const { context, host } = useStudio()
 const isUploading = ref(false)
 
 const folderTree = computed(() => (context.activeTree.value.current.value || []).filter(f => f.type === 'directory'))
@@ -32,12 +33,27 @@ async function onFileDrop(event: DragEvent) {
     return
   }
 
-  if (event.dataTransfer?.files) {
-    isUploading.value = true
-    await context.itemActionHandler[StudioItemActionId.UploadMedia]({
-      parentFsPath: currentTreeItem.value.fsPath,
-      files: Array.from(event.dataTransfer.files),
-    })
+  const files = Array.from(event.dataTransfer?.files || [])
+  if (files.length === 0) {
+    return
+  }
+
+  const parentFsPath = currentTreeItem.value.fsPath
+  const existingPath = checkExistingFiles(await host.media.list(), files, parentFsPath)
+  // TODO: Display smooth alert error
+  if (existingPath) {
+    console.error(`File already exists: ${existingPath}`)
+    return
+  }
+
+  isUploading.value = true
+  try {
+    await context.itemActionHandler[StudioItemActionId.UploadMedia]({ parentFsPath, files })
+  }
+  catch (error) {
+    console.error('Media upload error:', error)
+  }
+  finally {
     isUploading.value = false
   }
 }
