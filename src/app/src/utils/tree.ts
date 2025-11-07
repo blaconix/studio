@@ -11,7 +11,6 @@ import type { BaseItem } from '../types/item'
 import { isEqual } from './database'
 import { studioFlags } from '../composables/useStudio'
 import { getFileExtension, parseName } from './file'
-import { joinURL } from 'ufo'
 
 export const COLOR_STATUS_MAP: { [key in TreeStatus]?: string } = {
   [TreeStatus.Created]: 'green',
@@ -171,10 +170,6 @@ TreeItem[] {
   calculateDirectoryStatuses(tree)
 
   return tree
-}
-
-export function generateIdFromFsPath(fsPath: string, collectionName: string): string {
-  return joinURL(collectionName, fsPath)
 }
 
 export function getTreeStatus(modified?: BaseItem, original?: BaseItem): TreeStatus {

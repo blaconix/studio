@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildTree, findParentFromFsPath, findItemFromRoute, findItemFromFsPath, findDescendantsFileItemsFromFsPath, getTreeStatus, generateIdFromFsPath } from '../../../src/utils/tree'
+import { buildTree, findParentFromFsPath, findItemFromRoute, findItemFromFsPath, findDescendantsFileItemsFromFsPath, getTreeStatus } from '../../../src/utils/tree'
 import { tree } from '../../../test/mocks/tree'
 import type { TreeItem } from '../../../src/types/tree'
 import { dbItemsList, languagePrefixedDbItemsList, nestedDbItemsList } from '../../../test/mocks/database'
@@ -9,6 +9,7 @@ import { DraftStatus, TreeStatus, TreeRootId } from '../../../src/types'
 import type { RouteLocationNormalized } from 'vue-router'
 import type { DatabaseItem } from '../../../src/types/database'
 import { joinURL, withLeadingSlash } from 'ufo'
+import { generateIdFromFsPath } from '../../../src/utils/collection'
 
 describe('buildTree of documents with one level of depth', () => {
   // Result based on dbItemsList mock
