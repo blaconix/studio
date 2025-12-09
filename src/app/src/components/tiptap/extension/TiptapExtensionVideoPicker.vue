@@ -51,9 +51,9 @@ const handleCancel = () => {
   <NodeViewWrapper>
     <ModalMediaPicker
       :open="isOpen"
+      type="video"
       @select="handleImageSelect"
       @cancel="handleCancel"
-      type="video"
     />
   </NodeViewWrapper>
 </template>
