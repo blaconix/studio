@@ -11,7 +11,6 @@ export type FormItem = {
   default?: unknown
   options?: string[]
   title: string
-  description?: string
   icon?: string
   children?: FormTree
   disabled?: boolean

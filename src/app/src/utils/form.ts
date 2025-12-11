@@ -57,7 +57,7 @@ export const buildFormTreeFromSchema = (treeKey: string, schema: Draft07): FormT
         return item
       }
 
-      // Handle custom object form
+      // Object form
       if (def.type === 'object' && def.properties) {
         const children = Object.keys(def.properties).reduce((acc, key) => {
           // Hide content internal keys
@@ -88,6 +88,7 @@ export const buildFormTreeFromSchema = (treeKey: string, schema: Draft07): FormT
         return item
       }
 
+      // Array form
       if (def.type === 'array' && def.items) {
         return {
           id,
@@ -97,7 +98,7 @@ export const buildFormTreeFromSchema = (treeKey: string, schema: Draft07): FormT
         }
       }
 
-      // Handle primitive types
+      // Primitive form
       const editorType = editor?.input
       const type = def.type === 'string' && def.format?.includes('date') ? 'date' : editorType ?? def.type as never
 
@@ -136,6 +137,6 @@ export const buildFormTreeFromSchema = (treeKey: string, schema: Draft07): FormT
   }
 
   return {
-    [treeKey]: buildFormTreeItem(schema.definitions[treeKey]),
+    [treeKey]: buildFormTreeItem(schema.definitions[treeKey] as Draft07DefinitionProperty) as FormItem,
   }
 }

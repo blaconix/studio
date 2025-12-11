@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { ContentFileExtension, type DatabasePageItem, type DraftItem } from '../../types'
 import type { PropType } from 'vue'
 import { jsonToYaml, yamlToJson } from '../../utils/data'
@@ -20,10 +20,15 @@ const props = defineProps({
 const document = defineModel<DatabasePageItem>()
 
 const { host } = useStudio()
+
 // const { t } = useI18n()
 
 const skipFirstUpdate = ref(true)
 const contentJSON = ref({})
+
+const collection = computed(() => {
+  return host.collection.getByFsPath(document.value!.fsPath!)
+})
 
 // Trigger on document changes
 watch(() => document.value?.id + '-' + props.draftItem.version, async () => {
@@ -95,7 +100,11 @@ async function setJSON(document: DatabasePageItem) {
 </script>
 
 <template>
-  <SchemaBasedForm
-    v-model="contentJSON"
-  />
+  <div class="p-4">
+    <FormSchemaBased
+      v-model="contentJSON"
+      :collection-name="collection!.name"
+      :schema="collection!.schema"
+    />
+  </div>
 </template>
